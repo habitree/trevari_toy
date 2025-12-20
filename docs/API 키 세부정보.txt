@@ -1,0 +1,17 @@
+API 키 세부정보
+API 키
+AIzaSyDOx8W7QowFbIQghCpcpzP6HxDHbNsRZpo
+이름
+trevari
+프로젝트 이름
+projects/574823150848
+프로젝트 번호
+574823150848
+
+
+
+supabase.com api URL
+https://qzaqvgzeurnwgayhwujy.supabase.co
+
+API KEY 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6YXF2Z3pldXJud2dheWh3dWp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyMDkzNjMsImV4cCI6MjA4MTc4NTM2M30.sCNZlzgfV1lHvK_XJr6W_nUlqNXNE-mvyytubcTZWuQ
