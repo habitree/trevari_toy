@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { getReports } from '@/actions/reports'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { format } from 'date-fns'
-import { ko } from 'date-fns/locale'
 import { FileText, Calendar } from 'lucide-react'
 
 export function ReportList() {
@@ -47,16 +46,16 @@ export function ReportList() {
               <div className="flex justify-between items-center">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <span>
-                    {format(new Date(report.period_start), 'M월 d일', { locale: ko })}
+                    {format(new Date(report.period_start), 'M월 d일')}
                     {' ~ '}
-                    {format(new Date(report.period_end), 'M월 d일', { locale: ko })}
+                    {format(new Date(report.period_end), 'M월 d일')}
                   </span>
                   <span className="text-xs px-2 py-0.5 rounded-full bg-white border">
                     {report.report_type === 'weekly' ? '정기 리포트' : '요청 리포트'}
                   </span>
                 </CardTitle>
                 <span className="text-xs text-muted-foreground">
-                  {format(new Date(report.created_at), 'M.d HH:mm', { locale: ko })}
+                  {format(new Date(report.created_at), 'M.d HH:mm')}
                 </span>
               </div>
             </CardHeader>

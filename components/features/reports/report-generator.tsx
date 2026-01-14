@@ -52,12 +52,19 @@ export function ReportGenerator() {
 
       if (result.success) {
         toast.success('새로운 AI 리포트가 생성되었습니다!')
-        window.location.reload()
+        // 리포트 목록을 새로고침하기 위해 페이지 리로드
+        setTimeout(() => {
+          window.location.reload()
+        }, 500)
       } else {
-        throw new Error(result.error)
+        // 더 자세한 에러 메시지 표시
+        const errorMsg = result.error || '리포트 생성에 실패했습니다.'
+        toast.error(errorMsg)
+        console.error('리포트 생성 실패:', result)
       }
     } catch (error: any) {
-      toast.error(error.message || '리포트 생성에 실패했습니다.')
+      console.error('리포트 생성 예외:', error)
+      toast.error(error.message || '리포트 생성 중 오류가 발생했습니다.')
     } finally {
       setLoading(false)
     }
