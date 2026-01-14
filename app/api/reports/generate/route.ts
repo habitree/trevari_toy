@@ -5,6 +5,21 @@ import { subDays } from 'date-fns'
 
 export async function POST(request: NextRequest) {
     try {
+        // 환경 변수 검증
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            return NextResponse.json(
+                { error: 'Supabase 환경 변수가 설정되지 않았습니다.' },
+                { status: 500 }
+            )
+        }
+
+        if (!process.env.GEMINI_API_KEY) {
+            return NextResponse.json(
+                { error: 'Gemini API 키가 설정되지 않았습니다.' },
+                { status: 500 }
+            )
+        }
+
         const { periodStart, periodEnd } = await request.json()
 
         // 기본값: 최근 7일

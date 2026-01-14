@@ -3,6 +3,14 @@ import { supabase } from '@/lib/supabase/client'
 
 export async function POST(request: NextRequest) {
     try {
+        // 환경 변수 검증
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            return NextResponse.json(
+                { error: 'Supabase 환경 변수가 설정되지 않았습니다.' },
+                { status: 500 }
+            )
+        }
+
         const { intensity, recorded_at } = await request.json()
 
         // 유효성 검사
@@ -36,6 +44,14 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
     try {
+        // 환경 변수 검증
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            return NextResponse.json(
+                { error: 'Supabase 환경 변수가 설정되지 않았습니다.' },
+                { status: 500 }
+            )
+        }
+
         const { searchParams } = new URL(request.url)
         const from = searchParams.get('from')
         const to = searchParams.get('to')

@@ -4,6 +4,14 @@ import { startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns'
 
 export async function GET(request: NextRequest) {
     try {
+        // 환경 변수 검증
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            return NextResponse.json(
+                { error: 'Supabase 환경 변수가 설정되지 않았습니다.' },
+                { status: 500 }
+            )
+        }
+
         const { searchParams } = new URL(request.url)
         const month = searchParams.get('month') // YYYY-MM 형식
 
