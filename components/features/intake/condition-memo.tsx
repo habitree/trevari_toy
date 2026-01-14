@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { Smile, Frown, Meh, Activity } from 'lucide-react'
+import { format } from 'date-fns'
 
 const CONDITIONS = [
     { value: 'refreshed', label: '개운함', icon: Smile, color: 'text-green-500' },
@@ -15,7 +16,11 @@ const CONDITIONS = [
     { value: 'swollen', label: '붓기', icon: Activity, color: 'text-red-500' },
 ] as const
 
-export function ConditionMemo() {
+interface ConditionMemoProps {
+    selectedDate: Date
+}
+
+export function ConditionMemo({ selectedDate }: ConditionMemoProps) {
     const [selectedCondition, setSelectedCondition] = useState<string | null>(null)
     const [note, setNote] = useState('')
     const [loading, setLoading] = useState(false)
@@ -23,14 +28,19 @@ export function ConditionMemo() {
 
     useEffect(() => {
         loadTodayMemo()
-    }, [])
+    }, [selectedDate])
 
     const loadTodayMemo = async () => {
-        const result = await getTodayConditionMemo()
+        const dateStr = format(selectedDate, 'yyyy-MM-dd')
+        const result = await getTodayConditionMemo(dateStr)
         if (result.success && result.data) {
             setSelectedCondition(result.data.condition_type)
             setNote(result.data.note || '')
             setHasRecorded(true)
+        } else {
+            setSelectedCondition(null)
+            setNote('')
+            setHasRecorded(false)
         }
     }
 
@@ -39,15 +49,16 @@ export function ConditionMemo() {
 
         setLoading(true)
         try {
-            const today = new Date().toISOString().split('T')[0]
+            const dateStr = format(selectedDate, 'yyyy-MM-dd')
             const result = await saveConditionMemo(
-                today,
+                dateStr,
                 selectedCondition as any,
                 note
             )
 
             if (result.success) {
-                toast.success('오늘의 컨디션이 기록되었습니다.')
+                const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
+                toast.success(isToday ? '오늘의 컨디션이 기록되었습니다.' : '컨디션이 기록되었습니다.')
                 setHasRecorded(true)
             } else {
                 throw new Error(result.error)
@@ -59,10 +70,12 @@ export function ConditionMemo() {
         }
     }
 
+    const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
+
     return (
         <Card className="border-none shadow-none bg-transparent sm:bg-card sm:border sm:shadow-sm">
             <CardHeader className="px-0 sm:px-6">
-                <CardTitle className="text-lg">오늘 컨디션은 어땠어요?</CardTitle>
+                <CardTitle className="text-lg">{isToday ? '오늘 컨디션은 어땠어요?' : '컨디션은 어땠어요?'}</CardTitle>
             </CardHeader>
             <CardContent className="px-0 sm:px-6 space-y-4">
                 <div className="grid grid-cols-4 gap-2 sm:gap-4">

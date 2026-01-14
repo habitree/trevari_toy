@@ -31,14 +31,14 @@ export async function saveConditionMemo(
     }
 }
 
-export async function getTodayConditionMemo() {
+export async function getTodayConditionMemo(date?: string) {
     try {
-        const today = new Date().toISOString().split('T')[0]
+        const targetDate = date || new Date().toISOString().split('T')[0]
 
         const { data, error } = await supabase
             .from('condition_memos')
             .select('*')
-            .eq('memo_date', today)
+            .eq('memo_date', targetDate)
             .single()
 
         if (error && error.code !== 'PGRST116') throw error // PGRST116 = no rows

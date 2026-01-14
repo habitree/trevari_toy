@@ -4,22 +4,25 @@ import { useEffect, useState } from 'react'
 import { getTodayWaterLogs, deleteWaterLog } from '@/actions/water-logs'
 import { WaterLog } from '@/lib/supabase/types'
 import { format } from 'date-fns'
-import { ko } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Trash2, Droplets } from 'lucide-react'
 import { toast } from 'sonner'
 
-export function TodayIntakeList() {
+interface TodayIntakeListProps {
+  selectedDate: Date
+}
+
+export function TodayIntakeList({ selectedDate }: TodayIntakeListProps) {
   const [logs, setLogs] = useState<WaterLog[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadLogs()
-  }, [])
+  }, [selectedDate])
 
   const loadLogs = async () => {
     setLoading(true)
-    const result = await getTodayWaterLogs()
+    const result = await getTodayWaterLogs(selectedDate)
     if (result.success) {
       setLogs(result.data || [])
     }
@@ -38,10 +41,13 @@ export function TodayIntakeList() {
     }
   }
 
+  const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
+  const dateLabel = isToday ? '오늘의 기록' : `${format(selectedDate, 'M월 d일')} 기록`
+
   if (loading) return <div className="text-center py-8 text-muted-foreground">로딩 중...</div>
   if (logs.length === 0) return (
     <div className="text-center py-8 border rounded-lg bg-muted/20">
-      <p className="text-muted-foreground">오늘 기록이 없습니다.</p>
+      <p className="text-muted-foreground">{isToday ? '오늘 기록이 없습니다.' : '해당 날짜에 기록이 없습니다.'}</p>
       <p className="text-xs text-muted-foreground mt-1">물을 마시고 기록해보세요!</p>
     </div>
   )
@@ -49,7 +55,7 @@ export function TodayIntakeList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-lg">오늘의 기록</h3>
+        <h3 className="font-semibold text-lg">{dateLabel}</h3>
         <span className="text-sm text-muted-foreground">{logs.length}회</span>
       </div>
       <div className="space-y-3">
@@ -64,7 +70,7 @@ export function TodayIntakeList() {
               </div>
               <div>
                 <p className="font-medium">
-                  {format(new Date(log.recorded_at), 'a h:mm', { locale: ko })}
+                  {format(new Date(log.recorded_at), 'a h:mm')}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {log.intensity === 'high' && '마셨음'}

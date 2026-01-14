@@ -6,7 +6,11 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { WaterAnimation } from "@/components/ui/water-animation"
 
-export function IntakeRecorder() {
+interface IntakeRecorderProps {
+  selectedDate: Date
+}
+
+export function IntakeRecorder({ selectedDate }: IntakeRecorderProps) {
   const [loading, setLoading] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
 
@@ -16,7 +20,8 @@ export function IntakeRecorder() {
 
     setLoading(true)
     try {
-      const result = await createWaterLog(intensity)
+      const dateStr = selectedDate.toISOString().split('T')[0]
+      const result = await createWaterLog(intensity, dateStr)
 
       if (result.success) {
         // 애니메이션이 충분히 보일 때까지 약간의 딜레이 후 토스트 (선택사항)
