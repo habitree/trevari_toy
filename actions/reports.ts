@@ -5,10 +5,11 @@ import { supabase } from '@/lib/supabase/client'
 import { generateWaterIntakeReport } from '@/lib/ai/gemini'
 import { subDays } from 'date-fns'
 
-export async function generateReport() {
+export async function generateReport(periodStart?: string, periodEnd?: string) {
     try {
-        const end = new Date()
-        const start = subDays(end, 6)
+        // 기간이 제공되면 사용, 아니면 기본값(최근 7일)
+        const end = periodEnd ? new Date(periodEnd) : new Date()
+        const start = periodStart ? new Date(periodStart) : subDays(end, 6)
 
         // 물 섭취 데이터 조회
         const { data: waterLogs, error: waterError } = await supabase
