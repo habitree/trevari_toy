@@ -4,17 +4,23 @@ import { generateRAGResponse } from '@/lib/ai/gemini'
 
 export async function POST(request: NextRequest) {
     try {
-        // 환경 변수 검증
-        if (!process.env.GEMINI_API_KEY) {
+        // 환경 변수 검증 (더 엄격한 검증)
+        const geminiApiKey = process.env.GEMINI_API_KEY?.trim()
+        if (!geminiApiKey || geminiApiKey.length === 0) {
+            console.error('GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.')
             return NextResponse.json(
-                { error: 'Gemini API 키가 설정되지 않았습니다.' },
+                { error: 'Gemini API 키가 설정되지 않았습니다. .env.local 파일을 확인해주세요.' },
                 { status: 500 }
             )
         }
 
-        if (!process.env.DIFY_API_KEY || !process.env.DIFY_DATASET_ID) {
+        const difyApiKey = process.env.DIFY_API_KEY?.trim()
+        const difyDatasetId = process.env.DIFY_DATASET_ID?.trim()
+        
+        if (!difyApiKey || difyApiKey.length === 0 || !difyDatasetId || difyDatasetId.length === 0) {
+            console.error('Dify 환경 변수가 설정되지 않았습니다.')
             return NextResponse.json(
-                { error: 'Dify API 키 또는 Dataset ID가 설정되지 않았습니다.' },
+                { error: 'Dify API 키 또는 Dataset ID가 설정되지 않았습니다. .env.local 파일을 확인해주세요.' },
                 { status: 500 }
             )
         }

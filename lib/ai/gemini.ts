@@ -1,12 +1,22 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { DifyChunk } from './dify'
 
-// 환경 변수 검증
-if (!process.env.GEMINI_API_KEY) {
-    console.warn('⚠️ GEMINI_API_KEY가 설정되지 않았습니다.')
-}
+// GoogleGenerativeAI 인스턴스를 지연 초기화
+let genAI: GoogleGenerativeAI | null = null
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+function getGenAI(): GoogleGenerativeAI {
+    if (!genAI) {
+        const apiKey = process.env.GEMINI_API_KEY
+        
+        if (!apiKey || apiKey.trim().length === 0) {
+            throw new Error('GEMINI_API_KEY 환경 변수가 설정되지 않았거나 유효하지 않습니다.')
+        }
+        
+        genAI = new GoogleGenerativeAI(apiKey.trim())
+    }
+    
+    return genAI
+}
 
 export async function generateWaterIntakeReport(
     waterLogs: any[],
@@ -15,8 +25,9 @@ export async function generateWaterIntakeReport(
     periodEnd: string
 ): Promise<string> {
     try {
+        const ai = getGenAI()
         // ⚠️ 중요: gemini-3-flash-preview 모델 고정
-        const model = genAI.getGenerativeModel({
+        const model = ai.getGenerativeModel({
             model: 'gemini-3-flash-preview'
         })
 
@@ -113,8 +124,9 @@ export async function generateRAGResponse(
     contextChunks: DifyChunk[]
 ): Promise<string> {
     try {
+        const ai = getGenAI()
         // ⚠️ 중요: gemini-3-flash-preview 모델 고정
-        const model = genAI.getGenerativeModel({
+        const model = ai.getGenerativeModel({
             model: 'gemini-3-flash-preview'
         })
 
