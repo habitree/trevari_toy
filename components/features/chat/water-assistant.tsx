@@ -34,12 +34,25 @@ export function WaterAssistant({ open, onOpenChange }: WaterAssistantProps) {
     const scrollAreaRef = useRef<HTMLDivElement>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    // 메시지가 추가될 때마다 스크롤을 맨 아래로
+    // 메시지가 추가되거나 로딩 상태가 변경될 때마다 스크롤을 맨 아래로
     useEffect(() => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-        }
-    }, [messages])
+        // ScrollArea의 Viewport를 찾아서 스크롤
+        const timer = setTimeout(() => {
+            if (scrollAreaRef.current) {
+                // ScrollArea 내부의 Viewport 요소 찾기
+                const viewport = scrollAreaRef.current.querySelector('[data-slot="scroll-area-viewport"]') as HTMLElement
+                if (viewport) {
+                    viewport.scrollTop = viewport.scrollHeight
+                }
+            }
+            // 대체 방법: messagesEndRef 사용
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [messages, loading])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -103,8 +116,8 @@ export function WaterAssistant({ open, onOpenChange }: WaterAssistantProps) {
                     </SheetDescription>
                 </SheetHeader>
 
-                <ScrollArea className="flex-1 px-6 py-4" ref={scrollAreaRef}>
-                    <div className="space-y-4">
+                <ScrollArea className="flex-1 h-full" ref={scrollAreaRef}>
+                    <div className="px-6 py-4 space-y-4">
                         {messages.length === 0 && (
                             <div className="text-center text-muted-foreground py-8">
                                 <p className="text-sm">
@@ -165,7 +178,7 @@ export function WaterAssistant({ open, onOpenChange }: WaterAssistantProps) {
                             </div>
                         )}
 
-                        <div ref={messagesEndRef} />
+                        <div ref={messagesEndRef} className="h-1" />
                     </div>
                 </ScrollArea>
 
