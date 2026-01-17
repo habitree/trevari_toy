@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Sidebar } from "@/components/layout/sidebar"
 import { MobileNav } from "@/components/layout/mobile-nav"
+import { FloatingChatButton } from "@/components/features/chat/floating-chat-button"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -45,6 +46,7 @@ export default function RootLayout({
           <div className="flex-1 pb-16 md:pb-0">{children}</div>
           <MobileNav />
         </div>
+        <FloatingChatButton />
         <Analytics />
       </body>
     </html>
